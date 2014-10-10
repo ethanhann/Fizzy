@@ -7,11 +7,28 @@
 
 namespace Acme\Person;
 
+use JMS\Serializer\Annotation AS JMS;
 
 class PersonRequest
 {
     /**
-     * @var string
+     * @JMS\Type("string")
      */
-    public $name;
+    private $name;
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 }

@@ -5,14 +5,17 @@
  *          file that was distributed with this source code.
  */
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use KPhoen\Provider\NegotiationServiceProvider;
 use Macedigital\Silex\Provider\SerializerProvider;
 use Symfony\Component\HttpFoundation\Response;
 
-//use Zend\Code\Reflection\MethodReflection;
-
+// Autoload composer dependencies.
 require_once __DIR__ . '/../vendor/autoload.php';
+// Autoload annotations.
+AnnotationRegistry::registerLoader('class_exists');
 
+// Create and configure app.
 $app = new Silex\Application();
 $app->register(new SerializerProvider);
 $app->register(new NegotiationServiceProvider(array(
@@ -22,16 +25,20 @@ $app->register(new NegotiationServiceProvider(array(
 /*
  * Need scan src directory for controllers, then auto register them.
  */
-$app->get('/person', 'Acme\\Person\\PersonController::get');
-$app->get('/person2', function () use ($app) {
-    $request = new \Acme\Person\PersonRequest();
-    $response = (new \Acme\Person\PersonController())->get($request);
-    $formatNegotiator = $app['format.negotiator'];
+//$app->get('/person', 'Acme\\Person\\PersonController::get');
+$app->get('/person', function () use ($app) {
+    $serializer = $app['serializer'];
     $httpRequest = $app['request'];
+    $formatNegotiator = $app['format.negotiator'];
+    $params = $serializer->serialize($httpRequest->query->all(), 'json');
+
+    $requestDto = $serializer->deserialize($params, 'Acme\\Person\\PersonRequest', 'json');
+    $responseDto = (new \Acme\Person\PersonController())->get($requestDto);
+    // Content negotiation
     $priorities = array('json', 'xml');
     $acceptableContentTypes = implode(',', $httpRequest->getAcceptableContentTypes());
     $format = $formatNegotiator->getBestFormat($acceptableContentTypes, $priorities);
-    return new Response($app['serializer']->serialize($response, $format), 200, array(
+    return new Response($serializer->serialize($responseDto, $format), 200, array(
         'Content-Type' => $app['request']->getMimeType($format)
     ));
 });

@@ -24,6 +24,7 @@ class PersonController implements IService
      */
     public function get(PersonRequest $request)
     {
-        return new PersonResponse();
+        // use $request to do something
+        return (new PersonResponse())->setName($request->getName());
     }
 }

@@ -10,6 +10,42 @@ namespace Acme\Person;
 
 class PersonResponse
 {
-    public $name = 'foo';
-    public $age = 1;
+    private $name = 'foo';
+    private $age = 1;
+
+    /**
+     * @param $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param $age
+     * @return $this
+     */
+    public function setAge($age)
+    {
+        $this->age = $age;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAge()
+    {
+        return $this->age;
+    }
 } 
