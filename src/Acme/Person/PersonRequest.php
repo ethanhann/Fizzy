@@ -10,11 +10,8 @@ namespace Acme\Person;
 
 class PersonRequest
 {
-    /*
-     * Indicate the type of the variable (int, long, Foo, etc.)
-     */
     /**
-     * @Type("string")
+     * @var string
      */
     public $name;
-} 
+}

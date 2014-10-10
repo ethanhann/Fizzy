@@ -8,11 +8,15 @@
     ],
     "require": {
         "silex/silex": "~1.1",
-        "jdesrosiers/silex-jms-serializer-provider": "~0.1"
+        "zendframework/zend-code": "~2.3",
+        "macedigital/silex-jms-serializer": "~1.0",
+        "kphoen/negotiation-service-provider": "dev-master"
     },
     "autoload": {
         "psr-0": {
             "Acme": "src/"
         }
-    }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }

@@ -9,20 +9,21 @@ namespace Acme\Person;
 
 use Acme\IService;
 use Silex\Application;
+
 //use Symfony\Component\HttpFoundation\Request;
 
 /*
  * IService interface indicates that that the class is a web api controller.
  */
+
 class PersonController implements IService
 {
     /**
-     * @return string
+     * @param PersonRequest $request
+     * @return PersonResponse
      */
     public function get(PersonRequest $request)
     {
-        return 'blah';
+        return new PersonResponse();
     }
 }
-
-
