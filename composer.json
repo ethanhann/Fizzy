@@ -1,0 +1,18 @@
+{
+    "name": "ethanhann/try-silex-web-api",
+    "authors": [
+        {
+            "name": "Ethan Hann",
+            "email": "ethanhann@gmail.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.1",
+        "jdesrosiers/silex-jms-serializer-provider": "~0.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "Acme": "src/"
+        }
+    }
+}
