@@ -23,6 +23,6 @@ class PersonListRequest
 
     public function setPersonList($personList)
     {
-        $this->personList = personList;
+        $this->personList = $personList;
     }
 }

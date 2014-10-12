@@ -5,8 +5,7 @@
  *          file that was distributed with this source code.
  */
 
-namespace Acme;
+namespace Ehann;
 
 
-interface IWebServiceController
-{}
+interface IWebServiceController {}
