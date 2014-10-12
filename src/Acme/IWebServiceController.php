@@ -8,6 +8,5 @@
 namespace Acme;
 
 
-interface IService
-{
-}
+interface IWebServiceController
+{}

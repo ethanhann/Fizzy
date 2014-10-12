@@ -8,7 +8,7 @@
 namespace Acme\Person;
 
 
-class PersonResponse
+class Person
 {
     private $name = 'foo';
     private $age = 1;

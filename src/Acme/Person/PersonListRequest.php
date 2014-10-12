@@ -9,20 +9,20 @@ namespace Acme\Person;
 
 use JMS\Serializer\Annotation AS JMS;
 
-class PersonRequest
+class PersonListRequest
 {
     /**
-     * @JMS\Type("string")
+     * @JMS\Type("array")
      */
-    private $name;
+    private $personList;
 
-    public function setName($name)
+    public function getPeopleList()
     {
-        $this->name = $name;
+        return $this->personList;
     }
 
-    public function getName()
+    public function setPersonList($personList)
     {
-        return $this->name;
+        $this->personList = personList;
     }
 }

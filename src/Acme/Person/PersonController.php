@@ -7,7 +7,7 @@
 
 namespace Acme\Person;
 
-use Acme\IService;
+use Acme\IWebServiceController;
 use Silex\Application;
 
 //use Symfony\Component\HttpFoundation\Request;
@@ -16,15 +16,21 @@ use Silex\Application;
  * IService interface indicates that that the class is a web api controller.
  */
 
-class PersonController implements IService
+class PersonController implements IWebServiceController
 {
-    /**
-     * @param PersonRequest $request
-     * @return PersonResponse
-     */
-    public function get(PersonRequest $request)
+//    /**
+//     * @param PersonRequest $request
+//     * @return Acme\Person\Person
+//     */
+//    public function get(PersonRequest $request)
+//    {
+//        // use $request to do something
+//        return (new Person())->setName($request->getName());
+//    }
+
+    public function get(PersonListRequest $request)
     {
         // use $request to do something
-        return (new PersonResponse())->setName($request->getName());
+        return [new Person(), new Person()];
     }
 }
