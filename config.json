@@ -1,6 +1,6 @@
 {
   "baseUrl": "api",
-  "namespacePrefix": "Acme",
+  "namespacePrefix": "",
   "httpMethodNames": ["get", "getList", "post", "put", "delete"],
   "contentNegotiation" : {
     "priorities": ["json", "xml"]

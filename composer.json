@@ -18,7 +18,6 @@
     },
     "autoload": {
         "psr-4": {
-            "Acme\\": "src/Acme",
             "Ehann\\": "src/Ehann"
         }
     },

@@ -5,7 +5,6 @@
  *          file that was distributed with this source code.
  */
 
-namespace Ehann;
-
+namespace Eeh;
 
 interface WebServiceControllerInterface {}

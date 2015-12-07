@@ -5,7 +5,7 @@
  *          file that was distributed with this source code.
  */
 
-use Ehann\WebServiceControllerInterface;
+use Eeh\WebServiceControllerInterface;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use KPhoen\Provider\NegotiationServiceProvider;
 use Macedigital\Silex\Provider\SerializerProvider;
@@ -32,7 +32,7 @@ $app->register(new NegotiationServiceProvider(array(
 
 function get_web_service_classes($namespacePrefix, $sourcePath)
 {
-    $webServiceInterface = 'Ehann\WebServiceControllerInterface';
+    $webServiceInterface = 'Eeh\WebServiceControllerInterface';
     $path = $sourcePath;
     $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
     $regexIterator = new RegexIterator($recursiveIteratorIterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
@@ -61,6 +61,11 @@ $formatNegotiator = $app['format.negotiator'];
 $serializer = $app['serializer'];
 
 // Auto-register routes.
+if (!isset($loader->getPrefixesPsr4()[$config->namespacePrefix . '\\'])) {
+    throw new Exception(sprintf('Namespace prefix "%s" defined in the config was not found in the autoloader.',
+        $config->namespacePrefix
+    ));
+}
 $sourcePath = array_pop($loader->getPrefixesPsr4()[$config->namespacePrefix . '\\']);
 $routes = [];
 foreach (get_web_service_classes($config->namespacePrefix, $sourcePath) as $webServiceClass) {
