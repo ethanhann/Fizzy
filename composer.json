@@ -1,6 +1,6 @@
 {
-    "name": "ethanhann/try-silex-web-api",
-    "description": "Silex Web API experiment.",
+    "name": "ethanhann/fizzy",
+    "description": "A DTO-centric, PHP 7 micro Web API framework built on Silex.",
     "license": "MIT",
     "authors": [
         {
