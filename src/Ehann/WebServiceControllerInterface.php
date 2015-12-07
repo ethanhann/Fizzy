@@ -8,4 +8,4 @@
 namespace Ehann;
 
 
-interface IWebServiceController {}
+interface WebServiceControllerInterface {}

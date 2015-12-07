@@ -16,6 +16,11 @@ class CompanyRequest
      */
     private $name;
 
+    /**
+     * @JMS\Type("string")
+     */
+    private $location;
+
     public function setName($name)
     {
         $this->name = $name;
@@ -24,5 +29,23 @@ class CompanyRequest
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param string $location
+     * @return Company
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+        return $this;
     }
 }

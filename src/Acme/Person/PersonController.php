@@ -7,20 +7,20 @@
 
 namespace Acme\Person;
 
-use Ehann\IWebServiceController;
+use Ehann\WebServiceControllerInterface;
 
 /*
- * IService interface indicates that that the class is a web api controller.
+ * WebServiceControllerInterface interface indicates that that the class is a web api controller.
  */
-class PersonController implements IWebServiceController
+class PersonController implements WebServiceControllerInterface
 {
-    public function get(PersonRequest $request)
+    public function get(PersonRequest $request) : Person
     {
         // Use $request to do something.
         return new Person();
     }
 
-    public function getList(PersonListRequest $request)
+    public function getList(PersonListRequest $request) : array
     {
         // Use $request to do something.
         return [new Person(), new Person()];

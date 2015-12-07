@@ -7,11 +7,11 @@
 
 namespace Acme\Company;
 
-use Ehann\IWebServiceController;
+use Ehann\WebServiceControllerInterface;
 
-class CompanyController implements IWebServiceController
+class CompanyController implements WebServiceControllerInterface
 {
-    public function get(CompanyRequest $request)
+    public function get(CompanyRequest $request) : Company
     {
         // Use $request to do something.
         return new Company();

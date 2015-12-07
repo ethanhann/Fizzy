@@ -11,6 +11,7 @@ namespace Acme\Company;
 class Company
 {
     private $name = 'Sprockets, Inc.';
+    private $location = '18';
 
     /**
      * @param $name
@@ -28,5 +29,23 @@ class Company
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param string $location
+     * @return Company
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+        return $this;
     }
 } 

@@ -1,7 +1,7 @@
 {
     "name": "ethanhann/try-silex-web-api",
     "description": "Silex Web API experiment.",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Ethan Hann",
@@ -9,6 +9,7 @@
         }
     ],
     "require": {
+        "php": ">=7",
         "silex/silex": "~1.3",
         "zendframework/zend-code": "~2.6",
         "macedigital/silex-jms-serializer": "~1.0",
