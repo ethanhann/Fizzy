@@ -9,6 +9,7 @@ namespace Eeh;
 
 use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Exception;
 use JMS\Serializer\SerializerInterface;
 use KPhoen\Provider\NegotiationServiceProvider;
 use Macedigital\Silex\Provider\SerializerProvider;
@@ -84,7 +85,7 @@ class FizzyApp
         $this->app->run();
     }
 
-    function getWeServiceClasses($namespacePrefix, $sourcePath)
+    protected function getWebServiceClasses($namespacePrefix, $sourcePath)
     {
         $webServiceInterface = 'Eeh\WebServiceControllerInterface';
         $path = $sourcePath;
@@ -124,7 +125,7 @@ class FizzyApp
         $formatNegotiator = $this->formatNegotiator;
         $serializer = $this->serializer;
         $config = $this->config;
-        foreach (get_web_service_classes($this->config->namespacePrefix, $sourcePath) as $webServiceClass) {
+        foreach ($this->getWebServiceClasses($this->config->namespacePrefix, $sourcePath) as $webServiceClass) {
             // Need to get methods and DTOs from class
             $classReflection = new ClassReflection($webServiceClass);
             $httpMethodNames = $this->config->httpMethodNames;
