@@ -11,12 +11,17 @@ use KPhoen\Provider\NegotiationServiceProvider;
 use Macedigital\Silex\Provider\SerializerProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Zend\Code\Reflection\ClassReflection;
+use Webmozart\Json\JsonDecoder;
 
 // Load composer dependencies.
 $loader = require_once __DIR__ . '/../vendor/autoload.php';
 
 // Load annotations.
 AnnotationRegistry::registerLoader('class_exists');
+
+// Load config.
+$decoder = new JsonDecoder();
+$config = $decoder->decodeFile('../config.json');
 
 // Create and configure app.
 $app = new Silex\Application();
@@ -36,7 +41,7 @@ function get_web_service_classes($namespacePrefix, $sourcePath)
         $namespacePathArray = explode($sourcePath, $absolutePath);
         $namespacePath = array_pop($namespacePathArray);
         $fullyQualifiedClass = sprintf('%s%s\\%s',
-            trim($namespacePrefix, '\\'),
+            $namespacePrefix,
             pathinfo($namespacePath, PATHINFO_DIRNAME),
             pathinfo($namespacePath, PATHINFO_FILENAME)
         );
@@ -51,22 +56,22 @@ function get_web_service_classes($namespacePrefix, $sourcePath)
     });
 }
 
+// Services
 $formatNegotiator = $app['format.negotiator'];
 $serializer = $app['serializer'];
-$priorities = ['json', 'xml'];
-$namespacePrefix = 'Acme\\';
-$sourcePath = array_pop($loader->getPrefixesPsr4()[$namespacePrefix]);
-$routes = [];
 
-/*
- * Auto-register routes for the Acme namespace.
- */
-foreach (get_web_service_classes($namespacePrefix, $sourcePath) as $webServiceClass) {
+// Auto-register routes.
+$sourcePath = array_pop($loader->getPrefixesPsr4()[$config->namespacePrefix . '\\']);
+$routes = [];
+foreach (get_web_service_classes($config->namespacePrefix, $sourcePath) as $webServiceClass) {
     // Need to get methods and DTOs from class
     $classReflection = new ClassReflection($webServiceClass);
-    $httpMethodReflections = array_filter($classReflection->getMethods(), function ($methodReflection) {
-        return in_array($methodReflection->name, ['get', 'getList', 'post', 'put', 'delete']);
-    });
+    $httpMethodReflections = array_filter(
+        $classReflection->getMethods(),
+        function ($methodReflection) use ($config) {
+            return in_array($methodReflection->name, $config->httpMethodNames);
+        }
+    );
     // @todo add a check to make sure DTOs are unique. This might happen implicitly when registering routes.
     // Call for each http method/DTO in web service
     /** @var ReflectionMethod $httpMethodReflection */
@@ -74,18 +79,20 @@ foreach (get_web_service_classes($namespacePrefix, $sourcePath) as $webServiceCl
         // This assumes that the first argument of the HTTP method is a DTO.
         $httpMethodReflectionPrototype = $httpMethodReflection->getPrototype();
         $requestDtoClass = array_shift($httpMethodReflectionPrototype['arguments'])['type'];
-        $requestDtoProperties = (new ClassReflection($requestDtoClass))->getProperties();
+        $requestDtoClassReflection = new ClassReflection($requestDtoClass);
+        $requestDtoProperties = $requestDtoClassReflection->getProperties();
         $returnDtoClass = $httpMethodReflection->getReturnType();
         $returnDtoProperties = (new ClassReflection($returnDtoClass))->getProperties();
         $requestMethod = $httpMethodReflectionPrototype['name'];
-        $route = '/' . str_replace('\\', '/', pathinfo($requestDtoClass, PATHINFO_FILENAME));
-        $routes[] =  new class(
+        $route = '/' . $config->baseUrl . '/' . $requestDtoClassReflection->getShortName();
+        $routes[] = new class(
             $route,
             $requestDtoClass,
             $requestDtoProperties,
             $returnDtoClass,
             $returnDtoProperties
-        ) {
+        )
+        {
             public $path;
             public $requestDto;
             public $requestDtoParameters;
@@ -105,7 +112,7 @@ foreach (get_web_service_classes($namespacePrefix, $sourcePath) as $webServiceCl
                 $this->returnDtoProperties = $returnDtoProperties;
             }
         };
-        $app->get($route, function () use ($app, $formatNegotiator, $serializer, $priorities, $webServiceClass, $requestDtoClass, $requestMethod) {
+        $app->get($route, function () use ($app, $formatNegotiator, $serializer, $config, $webServiceClass, $requestDtoClass, $requestMethod) {
             $httpRequest = $app['request'];
             // Convert request parameters to the request DTO.
             $params = $serializer->serialize($httpRequest->query->all(), 'json');
@@ -113,7 +120,10 @@ foreach (get_web_service_classes($namespacePrefix, $sourcePath) as $webServiceCl
             // Get the response DTO by calling the HTTP method of the web service class, with the request DTO.
             $responseDto = (new $webServiceClass)->$requestMethod($requestDto);
             // Content negotiation
-            $format = $formatNegotiator->getBestFormat(implode(',', $httpRequest->getAcceptableContentTypes()), $priorities);
+            $format = $formatNegotiator->getBestFormat(
+                implode(',', $httpRequest->getAcceptableContentTypes()),
+                $config->contentNegotiation->priorities
+            );
             return new Response($serializer->serialize($responseDto, $format), 200, array(
                 'Content-Type' => $app['request']->getMimeType($format)
             ));
@@ -122,12 +132,14 @@ foreach (get_web_service_classes($namespacePrefix, $sourcePath) as $webServiceCl
 };
 
 /**
- * Register custom route page
+ * Register custom _routes meta route
  */
-$app->get('_routes', function () use ($app, $formatNegotiator, $serializer, $priorities, $routes) {
+$app->get($config->baseUrl . '/_routes', function () use ($app, $formatNegotiator, $serializer, $config, $routes) {
     $httpRequest = $app['request'];
-    $format = $formatNegotiator->getBestFormat(implode(',', $httpRequest->getAcceptableContentTypes()), $priorities);
-    $serializer = $app['serializer'];
+    $format = $formatNegotiator->getBestFormat(
+        implode(',', $httpRequest->getAcceptableContentTypes()),
+        $config->contentNegotiation->priorities
+    );
     $serializedData = $serializer->serialize($routes, $format);
     $responseCode = Response::HTTP_OK;
     if ($serializedData === false) {
