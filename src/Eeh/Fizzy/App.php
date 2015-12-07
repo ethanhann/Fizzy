@@ -5,7 +5,7 @@
  *          file that was distributed with this source code.
  */
 
-namespace Eeh;
+namespace Eeh\Fizzy;
 
 use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
@@ -25,7 +25,7 @@ use Zend\Code\Reflection\ClassReflection;
 use Webmozart\Json\JsonDecoder;
 use Zend\Code\Reflection\MethodReflection;
 
-class FizzyApp
+class App
 {
     /**
      * @var object
@@ -87,7 +87,6 @@ class FizzyApp
 
     protected function getWebServiceClasses($namespacePrefix, $sourcePath)
     {
-        $webServiceInterface = 'Eeh\WebServiceControllerInterface';
         $path = $sourcePath;
         $recursiveIteratorIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
         $regexIterator = new RegexIterator($recursiveIteratorIterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
@@ -102,7 +101,7 @@ class FizzyApp
             );
             $fullyQualifiedClasses[] = str_replace('/', '\\', trim($fullyQualifiedClass, '/'));
         }
-
+        $webServiceInterface = WebServiceControllerInterface::class;
         return array_filter($fullyQualifiedClasses, function ($class) use ($webServiceInterface) {
             $implementedInterfaces = class_implements($class);
             return $implementedInterfaces !== false ?

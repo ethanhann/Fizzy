@@ -5,6 +5,6 @@
  *          file that was distributed with this source code.
  */
 
-namespace Eeh;
+namespace Eeh\Fizzy;
 
 interface WebServiceControllerInterface {}
