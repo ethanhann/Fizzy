@@ -52,7 +52,12 @@ class App
      */
     private $classLoader;
 
-    public function __construct(string $configFilePath, ClassLoader $classLoader)
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function __construct(string $configFilePath, ClassLoader $classLoader, ContainerInterface $container)
     {
         // Load annotations.
         AnnotationRegistry::registerLoader('class_exists');
@@ -72,6 +77,8 @@ class App
         $this->serializer = $this->app['serializer'];
 
         $app['debug'] = true;
+
+        $this->container = $container;
     }
 
     public function configure()
@@ -213,5 +220,23 @@ class App
                 'Content-Type' => $app['request']->getMimeType($format)
             ));
         });
+    }
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * @param ContainerInterface $container
+     * @return App
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+        return $this;
     }
 }
